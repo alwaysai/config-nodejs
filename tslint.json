@@ -1,0 +1,3 @@
+{
+  "extends": "@alwaysai/tslint-config/nodejs/tslint.json"
+}
