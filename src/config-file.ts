@@ -1,8 +1,7 @@
 import { dirname, isAbsolute } from 'path';
 import { readFileSync, writeFileSync, renameSync, unlinkSync, existsSync } from 'fs';
-import * as t from 'io-ts';
-
-import { cast } from '@alwaysai/codecs';
+import { CodedError } from '@carnesen/coded-error';
+import * as t from '@alwaysai/codecs';
 
 import mkdirp = require('mkdirp');
 import parseJson = require('parse-json');
@@ -17,15 +16,32 @@ function serialize(config: any) {
   return serialized;
 }
 
-export function ConfigFile<T extends t.HasProps>(path: string, codec: T) {
-  if (!isAbsolute(path)) {
+export function ConfigFile<T extends t.Mixed>(opts: {
+  path: string;
+  codec: T;
+  ENOENT?: {
+    message?: string;
+    code?: any;
+  };
+}) {
+  if (!isAbsolute(opts.path)) {
     throw new Error('Expected "path" to be absolute');
   }
 
-  type Config = t.TypeOf<typeof codec>;
+  type Config = t.TypeOf<T>;
 
   function readRaw() {
-    const serialized = readFileSync(path, { encoding: 'utf8' });
+    let serialized: string;
+    try {
+      serialized = readFileSync(opts.path, { encoding: 'utf8' });
+    } catch (ex) {
+      if (ex.code === 'ENOENT' && opts.ENOENT) {
+        const message = opts.ENOENT.message || ex.message || 'File not found';
+        const code = opts.ENOENT.code || 'ENOENT';
+        throw new CodedError(message, code);
+      }
+      throw ex;
+    }
     return serialized;
   }
 
@@ -33,15 +49,15 @@ export function ConfigFile<T extends t.HasProps>(path: string, codec: T) {
     const info = {
       changed: false,
     };
-    if (existsSync(path) && serialized === readRaw()) {
+    if (existsSync(opts.path) && serialized === readRaw()) {
       return info;
     }
     info.changed = true;
-    const tmpFilePath = `${path}.tmp`;
+    const tmpFilePath = `${opts.path}.tmp`;
     mkdirp.sync(dirname(tmpFilePath));
     writeFileSync(tmpFilePath, serialized);
     try {
-      renameSync(tmpFilePath, path);
+      renameSync(tmpFilePath, opts.path);
     } catch (ex) {
       try {
         unlinkSync(tmpFilePath);
@@ -55,12 +71,12 @@ export function ConfigFile<T extends t.HasProps>(path: string, codec: T) {
   function read() {
     const serialized = readRaw();
     const parsed = parse(serialized);
-    const validated = cast(codec as any, parsed);
+    const validated = t.cast(opts.codec as any, parsed);
     return validated as Config;
   }
 
   function write(config: Config) {
-    const validated = cast(codec as any, config);
+    const validated = t.cast(opts.codec as any, config);
     const serialized = serialize(validated);
     const info = writeRaw(serialized);
     return { ...info, serialized };
@@ -70,11 +86,15 @@ export function ConfigFile<T extends t.HasProps>(path: string, codec: T) {
     const value = {
       changed: false,
     };
-    if (existsSync(path)) {
+    if (existsSync(opts.path)) {
       value.changed = true;
-      unlinkSync(path);
+      unlinkSync(opts.path);
     }
     return value;
+  }
+
+  function exists() {
+    return existsSync(opts.path);
   }
 
   function update(updater: (config: Config) => void) {
@@ -85,12 +105,11 @@ export function ConfigFile<T extends t.HasProps>(path: string, codec: T) {
   }
 
   return {
+    path: opts.path,
     read,
     write,
     remove,
     update,
-    get path() {
-      return path;
-    },
+    exists,
   };
 }
