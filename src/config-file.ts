@@ -75,6 +75,15 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     return validated as Config;
   }
 
+  function exists() {
+    return existsSync(opts.path);
+  }
+
+  function readIfExists() {
+    const maybeConfig: Config | undefined = exists() ? read() : undefined;
+    return maybeConfig;
+  }
+
   function write(config: Config) {
     const validated = t.cast(opts.codec as any, config);
     const serialized = serialize(validated);
@@ -93,10 +102,6 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     return value;
   }
 
-  function exists() {
-    return existsSync(opts.path);
-  }
-
   function update(updater: (config: Config) => void) {
     const config = read();
     updater(config);
@@ -107,6 +112,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
   return {
     path: opts.path,
     read,
+    readIfExists,
     write,
     remove,
     update,
