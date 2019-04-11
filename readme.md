@@ -1,4 +1,4 @@
-# @alwaysai/config-nodejs [![npm version](https://badge.fury.io/js/%40carnesen%2Fbitcoin-rpc.svg)](https://badge.fury.io/js/%40carnesen%2Fbitcoin-rpc) [![Build Status](https://travis-ci.com/alwaysai/config-nodejs.svg?branch=master)](https://travis-ci.com/alwaysai/config-nodejs)
+# @alwaysai/config-nodejs [![npm version](https://badge.fury.io/js/%40alwaysai%2Fconfig-nodejs.svg)](https://www.npmjs.com/package/@alwaysai/config-nodejs) [![Build Status](https://travis-ci.com/alwaysai/config-nodejs.svg?branch=master)](https://travis-ci.com/alwaysai/config-nodejs)
 
 This package includes runtime JavaScript files suitable for Node.js >=8 as well as the corresponding TypeScript type declarations. This software should be considered a "pre-alpha" release.
 
