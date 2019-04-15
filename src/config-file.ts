@@ -1,10 +1,11 @@
 import { dirname, isAbsolute } from 'path';
 import { readFileSync, writeFileSync, renameSync, unlinkSync, existsSync } from 'fs';
 import { CodedError } from '@carnesen/coded-error';
-import * as t from '@alwaysai/codecs';
-
+import * as t from 'io-ts';
 import mkdirp = require('mkdirp');
 import parseJson = require('parse-json');
+
+import { cast } from '@alwaysai/codecs';
 
 function parse(serialized: string) {
   const parsed: any = parseJson(serialized);
@@ -71,7 +72,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
   function read() {
     const serialized = readRaw();
     const parsed = parse(serialized);
-    const validated = t.cast(opts.codec as any, parsed);
+    const validated = cast(opts.codec as any, parsed);
     return validated as Config;
   }
 
@@ -85,7 +86,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
   }
 
   function write(config: Config) {
-    const validated = t.cast(opts.codec as any, config);
+    const validated = cast(opts.codec as any, config);
     const serialized = serialize(validated);
     const info = writeRaw(serialized);
     return { ...info, serialized };

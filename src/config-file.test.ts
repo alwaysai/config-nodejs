@@ -2,14 +2,13 @@ import { existsSync, readFileSync, writeFileSync } from 'fs';
 
 import * as tempy from 'tempy';
 
-import * as t from '@alwaysai/codecs';
+import * as t from 'io-ts';
 
 import { ConfigFile } from './config-file';
 
 const codec = t.intersection([
   t.type({
     foo: t.string,
-    bar: t.nullableString,
   }),
   t.partial({ baz: t.string }),
 ]);
@@ -27,38 +26,38 @@ describe(ConfigFile.name, () => {
 
   it('"write" synchronously writes a file to the specified path', () => {
     expect(existsSync(path)).toBe(false);
-    subject.write({ foo: 'foo', bar: null, baz: undefined });
+    subject.write({ foo: 'foo', baz: undefined });
     expect(existsSync(path)).toBe(true);
   });
 
   it('"write" returns the file contents as "serialized"', () => {
-    const info = subject.write({ foo: 'foo', bar: null });
+    const info = subject.write({ foo: 'foo' });
     expect(info.serialized).toEqual(readFileSync(path, 'utf8'));
   });
 
   it('"write" returns "changed" as `true` if it wrote the file, false otherwise', () => {
-    let info = subject.write({ foo: '123', bar: null });
+    let info = subject.write({ foo: '123' });
     expect(info.changed).toEqual(true);
-    info = subject.write({ foo: '123', bar: null });
+    info = subject.write({ foo: '123' });
     expect(info.changed).toEqual(false);
   });
 
   it('"read" reads and parses as JSON the specified file path', () => {
-    writeFileSync(path, '{"foo": "bar", "bar": null}');
+    writeFileSync(path, '{"foo": "bar"}');
     const config = subject.read();
-    expect(config).toEqual({ foo: 'bar', bar: null });
+    expect(config).toEqual({ foo: 'bar' });
   });
 
   it('"update" updates the contents of the file', () => {
-    writeFileSync(path, '{"foo": "foo", "bar": null }');
+    writeFileSync(path, '{"foo": "foo"}');
     subject.update(config => {
       config.foo = 'bar';
     });
-    expect(readFileSync(path, 'utf8')).toEqual('{\n  "foo": "bar",\n  "bar": null\n}');
+    expect(readFileSync(path, 'utf8')).toEqual('{\n  "foo": "bar"\n}');
   });
 
   it('read/write sanity check', () => {
-    const config = { foo: 'bar', bar: null };
+    const config = { foo: 'bar' };
     subject.write(config);
     expect(subject.read()).toEqual(config);
   });
