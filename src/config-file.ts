@@ -13,7 +13,7 @@ function parse(serialized: string) {
 }
 
 function serialize(config: any) {
-  const serialized = JSON.stringify(config, null, 2);
+  const serialized = `${JSON.stringify(config, null, 2)}\n`;
   return serialized;
 }
 
