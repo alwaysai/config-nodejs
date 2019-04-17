@@ -24,6 +24,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     message?: string;
     code?: any;
   };
+  initialValue?: t.TypeOf<T>;
 }) {
   if (!isAbsolute(opts.path)) {
     throw new Error('Expected "path" to be absolute');
@@ -104,8 +105,17 @@ export function ConfigFile<T extends t.Mixed>(opts: {
   }
 
   function update(updater: (config: Config) => void) {
-    const config = read();
-    updater(config);
+    let config: Config;
+    if (opts.initialValue) {
+      config = readIfExists() || opts.initialValue;
+    } else {
+      config = read();
+    }
+    const returnValue = updater(config);
+    // This mutates the config object ^^
+    if (typeof returnValue !== 'undefined') {
+      throw new Error('Updater returned a value. Mutate the passed config object!');
+    }
     const info = write(config);
     return info;
   }

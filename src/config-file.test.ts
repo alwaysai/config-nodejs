@@ -14,9 +14,15 @@ const codec = t.intersection([
 ]);
 
 const path = tempy.file();
+
+const initialValue = {
+  foo: 'foo',
+};
+
 const subject = ConfigFile({
   path,
   codec,
+  initialValue,
 });
 
 describe(ConfigFile.name, () => {
@@ -53,7 +59,13 @@ describe(ConfigFile.name, () => {
     subject.update(config => {
       config.foo = 'bar';
     });
-    expect(readFileSync(path, 'utf8')).toEqual('{\n  "foo": "bar"\n}');
+    expect(JSON.parse(readFileSync(path, 'utf8'))).toEqual({ foo: 'bar' });
+  });
+
+  it('"update" uses the provided default config if the file does not exist', () => {
+    subject.remove();
+    subject.update(() => {});
+    expect(JSON.parse(readFileSync(path, 'utf8'))).toEqual(initialValue);
   });
 
   it('read/write sanity check', () => {

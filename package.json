@@ -31,18 +31,18 @@
     "io-ts": "*"
   },
   "devDependencies": {
-    "@alwaysai/codecs": "0.0.0-3",
+    "@alwaysai/codecs": "0.0.0-5",
     "@alwaysai/tsconfig": "0.0.0",
     "@alwaysai/tslint-config": "0.0.3",
     "@types/jest": "24.0.11",
     "@types/node": "11.13.4",
-    "@types/tempy": "0.2.0",
+    "io-ts": "1.8.5",
     "jest": "24.7.1",
     "rimraf": "2.6.3",
-    "tempy": "0.2.1",
+    "tempy": "0.3.0",
     "ts-jest": "24.0.2",
     "ts-node": "8.1.0",
-    "tslint": "5.15.0",
+    "tslint": "5.16.0",
     "typescript": "3.4.3"
   },
   "files": [
