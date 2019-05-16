@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 
+import { runAndCatch } from '@carnesen/run-and-catch';
 import * as tempy from 'tempy';
 
 import * as t from 'io-ts';
@@ -66,6 +67,12 @@ describe(ConfigFile.name, () => {
     subject.remove();
     subject.update(() => {});
     expect(JSON.parse(readFileSync(path, 'utf8'))).toEqual(initialValue);
+  });
+
+  it('"update" throws if the updater function returns a value', async () => {
+    subject.write({ foo: 'foo' });
+    const ex = await runAndCatch(() => subject.update(config => config));
+    expect(ex.message).toMatch(/returned a value/);
   });
 
   it('read/write sanity check', () => {

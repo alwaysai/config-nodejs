@@ -7,11 +7,6 @@ import parseJson = require('parse-json');
 
 import { cast } from '@alwaysai/codecs';
 
-function parse(serialized: string) {
-  const parsed: any = parseJson(serialized);
-  return parsed;
-}
-
 function serialize(config: any) {
   const serialized = `${JSON.stringify(config, null, 2)}\n`;
   return serialized;
@@ -29,6 +24,17 @@ export function ConfigFile<T extends t.Mixed>(opts: {
   if (!isAbsolute(opts.path)) {
     throw new Error('Expected "path" to be absolute');
   }
+
+  return {
+    path: opts.path,
+    read,
+    readIfExists,
+    write,
+    remove,
+    update,
+    exists,
+    deserialize,
+  };
 
   type Config = t.TypeOf<T>;
 
@@ -70,11 +76,14 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     return info;
   }
 
-  function read() {
-    const serialized = readRaw();
-    const parsed = parse(serialized);
+  function deserialize(serialized: string) {
+    const parsed = parseJson(serialized);
     const validated = cast(opts.codec as any, parsed);
     return validated as Config;
+  }
+
+  function read() {
+    return deserialize(readRaw());
   }
 
   function exists() {
@@ -119,14 +128,4 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     const info = write(config);
     return info;
   }
-
-  return {
-    path: opts.path,
-    read,
-    readIfExists,
-    write,
-    remove,
-    update,
-    exists,
-  };
 }
