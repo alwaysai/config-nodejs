@@ -32,6 +32,18 @@ export function ConfigFile<T extends t.Mixed>(opts: {
 
   type Config = t.TypeOf<T>;
 
+  return {
+    path: opts.path,
+    read,
+    readIfExists,
+    readRaw,
+    write,
+    writeRaw,
+    remove,
+    update,
+    exists,
+  };
+
   function readRaw() {
     let serialized: string;
     try {
@@ -119,14 +131,4 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     const info = write(config);
     return info;
   }
-
-  return {
-    path: opts.path,
-    read,
-    readIfExists,
-    write,
-    remove,
-    update,
-    exists,
-  };
 }
