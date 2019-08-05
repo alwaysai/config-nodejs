@@ -24,26 +24,28 @@
     "@types/mkdirp": "0.5.2",
     "@types/parse-json": "4.0.0",
     "mkdirp": "0.5.1",
-    "parse-json": "4.0.0"
+    "parse-json": "5.0.0"
   },
   "peerDependencies": {
     "@alwaysai/codecs": "*",
-    "io-ts": "*"
+    "fp-ts": ">=2.0.0",
+    "io-ts": ">=2.0.0"
   },
   "devDependencies": {
-    "@alwaysai/codecs": "0.0.0-5",
+    "@alwaysai/codecs": "0.0.0-6",
     "@alwaysai/tsconfig": "0.0.0",
     "@alwaysai/tslint-config": "0.0.3",
-    "@types/jest": "24.0.11",
-    "@types/node": "11.13.4",
-    "io-ts": "1.8.5",
-    "jest": "24.7.1",
+    "@types/jest": "24.0.16",
+    "@types/node": "12.6.9",
+    "fp-ts": "2.0.3",
+    "io-ts": "2.0.0",
+    "jest": "24.8.0",
     "rimraf": "2.6.3",
     "tempy": "0.3.0",
     "ts-jest": "24.0.2",
-    "ts-node": "8.1.0",
-    "tslint": "5.16.0",
-    "typescript": "3.4.3"
+    "ts-node": "8.3.0",
+    "tslint": "5.18.0",
+    "typescript": "3.5.3"
   },
   "files": [
     "src",

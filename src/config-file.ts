@@ -42,6 +42,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     remove,
     update,
     exists,
+    initialize,
   };
 
   function readRaw() {
@@ -82,9 +83,14 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     return info;
   }
 
-  function read() {
+  function readParsed() {
     const serialized = readRaw();
     const parsed = parse(serialized);
+    return parsed;
+  }
+
+  function read() {
+    const parsed = readParsed();
     const validated = cast(opts.codec as any, parsed);
     return validated as Config;
   }
@@ -114,6 +120,15 @@ export function ConfigFile<T extends t.Mixed>(opts: {
       unlinkSync(opts.path);
     }
     return value;
+  }
+
+  function initialize() {
+    if (typeof opts.initialValue === 'undefined') {
+      throw new Error('"initialize" can only be called if "initialValue" is provided');
+    }
+    if (!exists()) {
+      write(opts.initialValue);
+    }
   }
 
   function update(updater: (config: Config) => void) {
