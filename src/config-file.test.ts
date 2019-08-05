@@ -73,4 +73,14 @@ describe(ConfigFile.name, () => {
     subject.write(config);
     expect(subject.read()).toEqual(config);
   });
+
+  it('initialize writes the file if it does not already exist', () => {
+    const config = { foo: 'bar' };
+    subject.write(config);
+    subject.initialize();
+    expect(subject.read()).toEqual(config);
+    subject.remove();
+    subject.initialize();
+    expect(subject.read()).toEqual(initialValue);
+  });
 });
