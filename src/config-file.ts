@@ -37,6 +37,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     read,
     readIfExists,
     readRaw,
+    readParsed,
     write,
     writeRaw,
     remove,
