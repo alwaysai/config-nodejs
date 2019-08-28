@@ -26,14 +26,15 @@ export function ConfigFile<T extends t.Mixed>(opts: {
   };
   initialValue?: t.TypeOf<T>;
 }) {
-  if (!isAbsolute(opts.path)) {
+  const { path } = opts;
+  if (!isAbsolute(path)) {
     throw new Error('Expected "path" to be absolute');
   }
 
   type Config = t.TypeOf<T>;
 
   return {
-    path: opts.path,
+    path,
     read,
     readIfExists,
     readRaw,
@@ -49,7 +50,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
   function readRaw() {
     let serialized: string;
     try {
-      serialized = readFileSync(opts.path, { encoding: 'utf8' });
+      serialized = readFileSync(path, { encoding: 'utf8' });
     } catch (ex) {
       if (ex.code === 'ENOENT' && opts.ENOENT) {
         const message = opts.ENOENT.message || ex.message || 'File not found';
@@ -65,15 +66,15 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     const info = {
       changed: false,
     };
-    if (existsSync(opts.path) && serialized === readRaw()) {
+    if (existsSync(path) && serialized === readRaw()) {
       return info;
     }
     info.changed = true;
-    const tmpFilePath = `${opts.path}.tmp`;
+    const tmpFilePath = `${path}.tmp`;
     mkdirp.sync(dirname(tmpFilePath));
     writeFileSync(tmpFilePath, serialized);
     try {
-      renameSync(tmpFilePath, opts.path);
+      renameSync(tmpFilePath, path);
     } catch (ex) {
       try {
         unlinkSync(tmpFilePath);
@@ -97,7 +98,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
   }
 
   function exists() {
-    return existsSync(opts.path);
+    return existsSync(path);
   }
 
   function readIfExists() {
@@ -116,9 +117,9 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     const value = {
       changed: false,
     };
-    if (existsSync(opts.path)) {
+    if (existsSync(path)) {
       value.changed = true;
-      unlinkSync(opts.path);
+      unlinkSync(path);
     }
     return value;
   }
