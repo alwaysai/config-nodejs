@@ -32,20 +32,20 @@
     "io-ts": ">=2.0.0"
   },
   "devDependencies": {
-    "@alwaysai/codecs": "0.0.0-6",
+    "@alwaysai/codecs": "0.0.0",
     "@alwaysai/tsconfig": "0.0.0",
     "@alwaysai/tslint-config": "0.0.3",
     "@types/jest": "24.0.18",
-    "@types/node": "12.7.2",
+    "@types/node": "12.7.5",
     "fp-ts": "2.0.5",
     "io-ts": "2.0.1",
     "jest": "24.9.0",
     "rimraf": "3.0.0",
     "tempy": "0.3.0",
-    "ts-jest": "24.0.2",
-    "ts-node": "8.3.0",
-    "tslint": "5.19.0",
-    "typescript": "3.6.2"
+    "ts-jest": "24.1.0",
+    "ts-node": "8.4.1",
+    "tslint": "5.20.0",
+    "typescript": "3.6.3"
   },
   "files": [
     "src",

@@ -1,4 +1,4 @@
-import { dirname, isAbsolute } from 'path';
+import { dirname, resolve } from 'path';
 import { readFileSync, writeFileSync, renameSync, unlinkSync, existsSync } from 'fs';
 import { CodedError } from '@carnesen/coded-error';
 import * as t from 'io-ts';
@@ -26,11 +26,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
   };
   initialValue?: t.TypeOf<T>;
 }) {
-  const { path } = opts;
-  if (!isAbsolute(path)) {
-    throw new Error('Expected "path" to be absolute');
-  }
-
+  const path = resolve(opts.path);
   type Config = t.TypeOf<T>;
 
   return {

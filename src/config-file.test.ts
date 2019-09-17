@@ -5,6 +5,7 @@ import * as tempy from 'tempy';
 import * as t from 'io-ts';
 
 import { ConfigFile } from './config-file';
+import { join } from 'path';
 
 const codec = t.intersection([
   t.type({
@@ -68,6 +69,16 @@ describe(ConfigFile.name, () => {
     expect(JSON.parse(readFileSync(path, 'utf8'))).toEqual(initialValue);
   });
 
+  it('"update" throws if the updater returns a value', () => {
+    expect(() => subject.update(() => ({ foo: 'bar' }))).toThrow('Mutate');
+  });
+
+  it('"update" throws if the there is no initial nor current value', () => {
+    expect(() =>
+      ConfigFile({ path: join(path, 'no-initial-value.json'), codec }).update(() => {}),
+    ).toThrow('ENOENT');
+  });
+
   it('read/write sanity check', () => {
     const config = { foo: 'bar' };
     subject.write(config);
@@ -82,5 +93,19 @@ describe(ConfigFile.name, () => {
     subject.remove();
     subject.initialize();
     expect(subject.read()).toEqual(initialValue);
+  });
+
+  it('initialize throws if no initial value is provided', () => {
+    const configFile = ConfigFile({ path: join(path, 'no-initial-value-2.json'), codec });
+    expect(configFile.initialize).toThrow('initialValue');
+  });
+
+  it('readRaw', () => {
+    const configFile = ConfigFile({
+      path: tempy.file(),
+      codec,
+      ENOENT: { code: 'foo', message: 'bar' },
+    });
+    expect(() => configFile.read()).toThrow('bar');
   });
 });

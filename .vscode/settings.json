@@ -1,6 +1,11 @@
 {
   "cSpell.words": [
-    "deserialize"
+    "alwaysai",
+    "carnesen",
+    "deserialize",
+    "postversion",
+    "preversion",
+    "tempy"
   ],
   "tslint.enable": true
 }
