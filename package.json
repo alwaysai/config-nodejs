@@ -36,7 +36,7 @@
     "@alwaysai/tsconfig": "0.0.0",
     "@alwaysai/tslint-config": "0.0.3",
     "@types/jest": "24.0.18",
-    "@types/node": "12.7.5",
+    "@types/node": "12.7.8",
     "fp-ts": "2.0.5",
     "io-ts": "2.0.1",
     "jest": "24.9.0",
