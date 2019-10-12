@@ -17,6 +17,12 @@ function serialize(config: any) {
   return serialized;
 }
 
+function RandomString() {
+  return Math.random()
+    .toString(36)
+    .substring(2);
+}
+
 export function ConfigFile<T extends t.Mixed>(opts: {
   path: string;
   codec: T;
@@ -66,16 +72,16 @@ export function ConfigFile<T extends t.Mixed>(opts: {
       return info;
     }
     info.changed = true;
-    const tmpFilePath = `${path}.tmp`;
+    const tmpFilePath = `${path}.${RandomString()}.tmp`;
     mkdirp.sync(dirname(tmpFilePath));
     writeFileSync(tmpFilePath, serialized);
     try {
       renameSync(tmpFilePath, path);
-    } catch (ex) {
+    } catch (exception) {
       try {
         unlinkSync(tmpFilePath);
       } finally {
-        throw ex;
+        throw exception;
       }
     }
     return info;
@@ -139,7 +145,9 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     const returnValue = updater(config);
     // This mutates the config object ^^
     if (typeof returnValue !== 'undefined') {
-      throw new Error('Updater returned a value. Mutate the passed config object!');
+      throw new Error(
+        'Updater returned a value. Mutate the passed configuration instead.',
+      );
     }
     const info = write(config);
     return info;
