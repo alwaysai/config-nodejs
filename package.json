@@ -20,11 +20,11 @@
     "postversion": "npm publish"
   },
   "dependencies": {
-    "@carnesen/coded-error": "0.1.0",
-    "@types/mkdirp": "0.5.2",
+    "@carnesen/coded-error": "0.4.0",
+    "@types/mkdirp": "1.0.2",
     "@types/parse-json": "4.0.0",
-    "mkdirp": "0.5.1",
-    "parse-json": "5.0.0"
+    "mkdirp": "1.0.4",
+    "parse-json": "6.0.2"
   },
   "peerDependencies": {
     "@alwaysai/codecs": "*",
@@ -40,11 +40,11 @@
     "fp-ts": "2.1.0",
     "io-ts": "2.0.1",
     "jest": "24.9.0",
-    "rimraf": "3.0.0",
+    "rimraf": "3.0.2",
     "tempy": "0.3.0",
     "ts-jest": "24.1.0",
     "ts-node": "8.4.1",
-    "tslint": "5.20.0",
+    "tslint": "5.20.1",
     "typescript": ">=3.8.0"
   },
   "files": [
