@@ -62,9 +62,9 @@ export function ConfigFile<T extends t.Mixed>(opts: {
         const message = opts.ENOENT.message || ex.message || 'File not found';
         const code = opts.ENOENT.code || 'ENOENT';
         throw new CodedError(message, code);
-      }
-      else if (ex.code === 'EACCES' && opts.EACCES) {
-        const message = opts.EACCES.message || ex.message || 'Permission not granded on file';
+      } else if (ex.code === 'EACCES' && opts.EACCES) {
+        const message =
+          opts.EACCES.message || ex.message || 'Permission not granded on file';
         const code = opts.EACCES.code || 'EACCES';
         throw new CodedError(message, code);
       }
@@ -87,7 +87,8 @@ export function ConfigFile<T extends t.Mixed>(opts: {
       writeFileSync(tmpFilePath, serialized);
     } catch (ex) {
       if (ex.code === 'EACCES' && opts.EACCES) {
-        const message = opts.EACCES.message || ex.message || 'Permission not granded on file';
+        const message =
+          opts.EACCES.message || ex.message || 'Permission not granded on file';
         const code = opts.EACCES.code || 'EACCES';
         throw new CodedError(message, code);
       }
