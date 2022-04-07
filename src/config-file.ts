@@ -3,12 +3,11 @@ import { readFileSync, writeFileSync, renameSync, unlinkSync, existsSync } from 
 import { CodedError } from '@carnesen/coded-error';
 import * as t from 'io-ts';
 import mkdirp = require('mkdirp');
-import parseJson = require('parse-json');
 
 import { cast } from '@alwaysai/codecs';
 
 function parse(serialized: string) {
-  const parsed: any = parseJson(serialized);
+  const parsed: any = JSON.parse(serialized);
   return parsed;
 }
 
@@ -88,7 +87,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     } catch (ex) {
       if (ex.code === 'EACCES' && opts.EACCES) {
         const message =
-          opts.EACCES.message || ex.message || 'Permission not granded on file';
+          opts.EACCES.message || ex.message || 'Permission not granted on file';
         const code = opts.EACCES.code || 'EACCES';
         throw new CodedError(message, code);
       }
