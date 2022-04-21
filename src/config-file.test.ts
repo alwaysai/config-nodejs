@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 
-import * as tempy from 'tempy';
+import tempy from 'tempy';
 
 import * as t from 'io-ts';
 
@@ -57,7 +57,7 @@ describe(ConfigFile.name, () => {
 
   it('"update" updates the contents of the file', () => {
     writeFileSync(path, '{"foo": "foo"}');
-    subject.update(config => {
+    subject.update((config) => {
       config.foo = 'bar';
     });
     expect(JSON.parse(readFileSync(path, 'utf8'))).toEqual({ foo: 'bar' });

@@ -17,9 +17,11 @@ function serialize(config: any) {
 }
 
 function RandomString() {
-  return Math.random()
-    .toString(36)
-    .substring(2);
+  return Math.random().toString(36).substring(2);
+}
+
+function isError(error: any): error is NodeJS.ErrnoException {
+  return error instanceof Error;
 }
 
 export function ConfigFile<T extends t.Mixed>(opts: {
@@ -57,15 +59,17 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     try {
       serialized = readFileSync(path, { encoding: 'utf8' });
     } catch (ex) {
-      if (ex.code === 'ENOENT' && opts.ENOENT) {
-        const message = opts.ENOENT.message || ex.message || 'File not found';
-        const code = opts.ENOENT.code || 'ENOENT';
-        throw new CodedError(message, code);
-      } else if (ex.code === 'EACCES' && opts.EACCES) {
-        const message =
-          opts.EACCES.message || ex.message || 'Permission not granded on file';
-        const code = opts.EACCES.code || 'EACCES';
-        throw new CodedError(message, code);
+      if (isError(ex)) {
+        if (ex.code === 'ENOENT' && opts.ENOENT) {
+          const message = opts.ENOENT.message || ex.message || 'File not found';
+          const code = opts.ENOENT.code || 'ENOENT';
+          throw new CodedError(message, code);
+        } else if (ex.code === 'EACCES' && opts.EACCES) {
+          const message =
+            opts.EACCES.message || ex.message || 'Permission not granted on file';
+          const code = opts.EACCES.code || 'EACCES';
+          throw new CodedError(message, code);
+        }
       }
       throw ex;
     }
@@ -85,11 +89,13 @@ export function ConfigFile<T extends t.Mixed>(opts: {
       mkdirp.sync(dirname(tmpFilePath));
       writeFileSync(tmpFilePath, serialized);
     } catch (ex) {
-      if (ex.code === 'EACCES' && opts.EACCES) {
-        const message =
-          opts.EACCES.message || ex.message || 'Permission not granted on file';
-        const code = opts.EACCES.code || 'EACCES';
-        throw new CodedError(message, code);
+      if (isError(ex)) {
+        if (ex.code === 'EACCES' && opts.EACCES) {
+          const message =
+            opts.EACCES.message || ex.message || 'Permission not granted on file';
+          const code = opts.EACCES.code || 'EACCES';
+          throw new CodedError(message, code);
+        }
       }
       throw ex;
     }
