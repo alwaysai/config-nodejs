@@ -1,6 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 
-import tempy from 'tempy';
+import * as tempy from 'tempy';
 
 import * as t from 'io-ts';
 

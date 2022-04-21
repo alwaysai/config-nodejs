@@ -21,7 +21,8 @@ function RandomString() {
 }
 
 function isError(error: any): error is NodeJS.ErrnoException {
-  return error instanceof Error;
+  return Object.prototype.hasOwnProperty.call(error, "code")
+        || Object.prototype.hasOwnProperty.call(error, "errno");
 }
 
 export function ConfigFile<T extends t.Mixed>(opts: {
