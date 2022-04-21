@@ -111,7 +111,7 @@ describe(ConfigFile.name, () => {
     });
     expect(configFile.initialize).toThrow('bar');
     chmodSync(tmpDir, 0o777);
-  })
+  });
 
   it('read throws ENOENT', () => {
     const configFile = ConfigFile({
@@ -130,7 +130,7 @@ describe(ConfigFile.name, () => {
       initialValue,
       EACCES: { code: 'foo', message: 'bar' },
     });
-    configFile.initialize()
+    configFile.initialize();
     chmodSync(tmpPath, 0o000);
     expect(() => configFile.read()).toThrow('bar');
     chmodSync(tmpPath, 0o777);
