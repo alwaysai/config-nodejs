@@ -100,6 +100,19 @@ describe(ConfigFile.name, () => {
     expect(configFile.initialize).toThrow('initialValue');
   });
 
+  it('write throws EACCES', () => {
+    const tmpDir = tempy.directory();
+    chmodSync(tmpDir, 0o000);
+    const configFile = ConfigFile({
+      path: join(tmpDir, 'test.json'),
+      codec,
+      initialValue,
+      EACCES: { code: 'foo', message: 'bar' },
+    });
+    expect(configFile.initialize).toThrow('bar');
+    chmodSync(tmpDir, 0o777);
+  })
+
   it('read throws ENOENT', () => {
     const configFile = ConfigFile({
       path: tempy.file(),
