@@ -20,9 +20,11 @@ function RandomString() {
   return Math.random().toString(36).substring(2);
 }
 
-function isError(error: any): error is NodeJS.ErrnoException {
-  return Object.prototype.hasOwnProperty.call(error, "code")
-        || Object.prototype.hasOwnProperty.call(error, "errno");
+function isErrnoException(error: any): error is NodeJS.ErrnoException {
+  return (
+    Object.prototype.hasOwnProperty.call(error, 'code') ||
+    Object.prototype.hasOwnProperty.call(error, 'errno')
+  );
 }
 
 export function ConfigFile<T extends t.Mixed>(opts: {
@@ -60,7 +62,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
     try {
       serialized = readFileSync(path, { encoding: 'utf8' });
     } catch (ex) {
-      if (isError(ex)) {
+      if (isErrnoException(ex)) {
         if (ex.code === 'ENOENT' && opts.ENOENT) {
           const message = opts.ENOENT.message || ex.message || 'File not found';
           const code = opts.ENOENT.code || 'ENOENT';
@@ -90,7 +92,7 @@ export function ConfigFile<T extends t.Mixed>(opts: {
       mkdirp.sync(dirname(tmpFilePath));
       writeFileSync(tmpFilePath, serialized);
     } catch (ex) {
-      if (isError(ex)) {
+      if (isErrnoException(ex)) {
         if (ex.code === 'EACCES' && opts.EACCES) {
           const message =
             opts.EACCES.message || ex.message || 'Permission not granted on file';
