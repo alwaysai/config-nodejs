@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'fs';
+import { chmodSync, existsSync, readFileSync, writeFileSync } from 'fs';
 
 import * as tempy from 'tempy';
 
@@ -57,7 +57,7 @@ describe(ConfigFile.name, () => {
 
   it('"update" updates the contents of the file', () => {
     writeFileSync(path, '{"foo": "foo"}');
-    subject.update(config => {
+    subject.update((config) => {
       config.foo = 'bar';
     });
     expect(JSON.parse(readFileSync(path, 'utf8'))).toEqual({ foo: 'bar' });
@@ -100,12 +100,39 @@ describe(ConfigFile.name, () => {
     expect(configFile.initialize).toThrow('initialValue');
   });
 
-  it('readRaw', () => {
+  it('write throws EACCES', () => {
+    const tmpDir = tempy.directory();
+    chmodSync(tmpDir, 0o000);
+    const configFile = ConfigFile({
+      path: join(tmpDir, 'test.json'),
+      codec,
+      initialValue,
+      EACCES: { code: 'foo', message: 'bar' },
+    });
+    expect(configFile.initialize).toThrow('bar');
+    chmodSync(tmpDir, 0o777);
+  });
+
+  it('read throws ENOENT', () => {
     const configFile = ConfigFile({
       path: tempy.file(),
       codec,
       ENOENT: { code: 'foo', message: 'bar' },
     });
     expect(() => configFile.read()).toThrow('bar');
+  });
+
+  it('read throws EACCES', () => {
+    const tmpPath = tempy.file();
+    const configFile = ConfigFile({
+      path: tmpPath,
+      codec,
+      initialValue,
+      EACCES: { code: 'foo', message: 'bar' },
+    });
+    configFile.initialize();
+    chmodSync(tmpPath, 0o000);
+    expect(() => configFile.read()).toThrow('bar');
+    chmodSync(tmpPath, 0o777);
   });
 });
