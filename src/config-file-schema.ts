@@ -56,6 +56,7 @@ export function ConfigFileSchema<T>(opts: {
     update,
     exists,
     initialize,
+    validate,
     getErrors,
   };
 
