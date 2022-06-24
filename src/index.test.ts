@@ -1,9 +1,8 @@
-import { ALWAYSAI_CONFIG_DIR, ConfigFile } from './index';
-const pkg = require('../package');
+import { ConfigFile, ConfigFileSchema } from './index';
 
-describe(pkg.name, () => {
-  it(`exports a constructor function ${ConfigFile.name} and a string constant ALWAYSAI_CONFIG_DIR`, () => {
+describe('index', () => {
+  test(`check exports`, () => {
     expect(typeof ConfigFile).toBe('function');
-    expect(typeof ALWAYSAI_CONFIG_DIR).toBe('string');
+    expect(typeof ConfigFileSchema).toBe('function');
   });
 });
