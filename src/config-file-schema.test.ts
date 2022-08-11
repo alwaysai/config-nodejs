@@ -3,14 +3,14 @@ import * as tempy from 'tempy';
 
 import { ConfigFileSchema } from './config-file-schema';
 import { join } from 'path';
-import { JSONSchemaType } from 'ajv';
+import Ajv from 'ajv';
 
 interface TestSchema {
   foo: string;
   baz?: string;
 }
 
-const schema: JSONSchemaType<TestSchema> = {
+const validateSchema = {
   type: 'object',
   properties: {
     foo: { type: 'string' },
@@ -20,6 +20,12 @@ const schema: JSONSchemaType<TestSchema> = {
   additionalProperties: false,
 };
 
+const ajv = new Ajv({
+  schemas: [validateSchema],
+});
+
+const validate = ajv.compile<TestSchema>(validateSchema);
+
 const path = tempy.file();
 
 const initialValue: TestSchema = {
@@ -28,7 +34,7 @@ const initialValue: TestSchema = {
 
 const subject = ConfigFileSchema({
   path,
-  schema,
+  validate,
   initialValue,
 });
 
@@ -81,7 +87,7 @@ describe(ConfigFileSchema.name, () => {
 
   test('"update" throws if the there is no initial nor current value', () => {
     expect(() =>
-      ConfigFileSchema({ path: join(path, 'no-initial-value.json'), schema }).update(
+      ConfigFileSchema({ path: join(path, 'no-initial-value.json'), validate }).update(
         () => {},
       ),
     ).toThrow('ENOENT');
@@ -126,7 +132,7 @@ describe(ConfigFileSchema.name, () => {
   test('initialize throws if no initial value is provided', () => {
     const configFile = ConfigFileSchema({
       path: join(path, 'no-initial-value-2.json'),
-      schema,
+      validate,
     });
     expect(configFile.initialize).toThrow('initialValue');
   });
@@ -136,7 +142,7 @@ describe(ConfigFileSchema.name, () => {
     chmodSync(tmpDir, 0o000);
     const configFile = ConfigFileSchema({
       path: join(tmpDir, 'test.json'),
-      schema,
+      validate,
       initialValue,
       EACCES: { code: 'foo', message: 'bar' },
     });
@@ -147,7 +153,7 @@ describe(ConfigFileSchema.name, () => {
   test('read throws ENOENT', () => {
     const configFile = ConfigFileSchema({
       path: tempy.file(),
-      schema,
+      validate,
       ENOENT: { code: 'foo', message: 'bar' },
     });
     expect(() => configFile.read()).toThrow('bar');
@@ -157,7 +163,7 @@ describe(ConfigFileSchema.name, () => {
     const tmpPath = tempy.file();
     const configFile = ConfigFileSchema({
       path: tmpPath,
-      schema,
+      validate,
       initialValue,
       EACCES: { code: 'foo', message: 'bar' },
     });
