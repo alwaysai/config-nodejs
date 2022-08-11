@@ -2,7 +2,7 @@ import { dirname, resolve } from 'path';
 import { readFileSync, writeFileSync, renameSync, unlinkSync, existsSync } from 'fs';
 import { CodedError } from '@carnesen/coded-error';
 import mkdirp = require('mkdirp');
-import Ajv, { JSONSchemaType } from 'ajv';
+import Ajv, { JSONSchemaType, ValidateFunction } from 'ajv';
 
 const ajv = new Ajv();
 
@@ -30,6 +30,7 @@ function isErrnoException(error: any): error is NodeJS.ErrnoException {
 export function ConfigFileSchema<T>(opts: {
   path: string;
   schema: JSONSchemaType<T>;
+  validate?: ValidateFunction;
   ENOENT?: {
     message?: string;
     code?: any;
@@ -42,7 +43,13 @@ export function ConfigFileSchema<T>(opts: {
 }) {
   const path = resolve(opts.path);
   type Config = T;
-  const validate = ajv.compile(opts.schema);
+
+  let validate: ValidateFunction;
+  if (opts.validate === undefined) {
+    validate = ajv.compile(opts.schema);
+  } else {
+    validate = opts.validate;
+  }
 
   return {
     path,
