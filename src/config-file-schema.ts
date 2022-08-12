@@ -27,7 +27,7 @@ function isErrnoException(error: any): error is NodeJS.ErrnoException {
 
 export function ConfigFileSchema<T>(opts: {
   path: string;
-  validate: ValidateFunction;
+  validateFunction: ValidateFunction;
   ENOENT?: {
     message?: string;
     code?: any;
@@ -40,7 +40,7 @@ export function ConfigFileSchema<T>(opts: {
 }) {
   const path = resolve(opts.path);
   type Config = T;
-  const validate = opts.validate;
+  const validate = opts.validateFunction;
 
   return {
     path,
