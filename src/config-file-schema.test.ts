@@ -20,9 +20,7 @@ const schema: JSONSchemaType<TestSchema> = {
   additionalProperties: false,
 };
 
-const ajv = new Ajv({
-  schemas: [schema],
-});
+const ajv = new Ajv();
 
 const validateFunction = ajv.compile(schema);
 
