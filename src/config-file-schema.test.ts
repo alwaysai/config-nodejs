@@ -61,7 +61,7 @@ describe(ConfigFileSchema.name, () => {
 
   test('"read" reads and parses as JSON the specified file path without initial value', () => {
     writeFileSync(path, '{"foo": "bar"}');
-    const testConfig = ConfigFileSchema({path, validateFunction});
+    const testConfig = ConfigFileSchema({ path, validateFunction });
     const config = testConfig.read();
     expect(config).toEqual({ foo: 'bar' });
     expect(config.foo).toEqual('bar');
