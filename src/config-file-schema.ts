@@ -27,7 +27,7 @@ function isErrnoException(error: any): error is NodeJS.ErrnoException {
 
 export function ConfigFileSchema<T>(opts: {
   path: string;
-  validateFunction: ValidateFunction;
+  validateFunction: ValidateFunction<T>;
   ENOENT?: {
     message?: string;
     code?: any;
