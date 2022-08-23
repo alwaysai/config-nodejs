@@ -59,10 +59,13 @@ describe(ConfigFileSchema.name, () => {
     expect(info.changed).toEqual(false);
   });
 
-  test('"read" reads and parses as JSON the specified file path', () => {
+  test('"read" reads and parses as JSON the specified file path without initial value', () => {
     writeFileSync(path, '{"foo": "bar"}');
-    const config = subject.read();
+    const testConfig = ConfigFileSchema({path, validateFunction});
+    const config = testConfig.read();
     expect(config).toEqual({ foo: 'bar' });
+    expect(config.foo).toEqual('bar');
+    testConfig.remove();
   });
 
   test('"update" updates the contents of the file', () => {
