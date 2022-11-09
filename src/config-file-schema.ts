@@ -5,8 +5,14 @@ import mkdirp = require('mkdirp');
 import { ValidateFunction } from 'ajv';
 
 function parse(serialized: string) {
-  const parsed: any = JSON.parse(serialized);
-  return parsed;
+  try {
+    const parsed: any = JSON.parse(serialized);
+    return parsed;
+  } catch (error) {
+    throw new Error(
+      'Error parsing file contents into valid JSON. Please check file is properly formatted.',
+    );
+  }
 }
 
 function serialize(config: any) {
@@ -116,9 +122,13 @@ export function ConfigFileSchema<T>(opts: {
   }
 
   function readParsed() {
-    const serialized = readRaw();
-    const parsed = parse(serialized);
-    return parsed;
+    try {
+      const serialized = readRaw();
+      const parsed = parse(serialized);
+      return parsed;
+    } catch (error) {
+      return undefined;
+    }
   }
 
   function read() {
