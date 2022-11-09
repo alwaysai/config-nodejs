@@ -122,8 +122,8 @@ export function ConfigFileSchema<T>(opts: {
   }
 
   function readParsed() {
+    const serialized = readRaw();
     try {
-      const serialized = readRaw();
       const parsed = parse(serialized);
       return parsed;
     } catch (error) {
