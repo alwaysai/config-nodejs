@@ -174,4 +174,17 @@ describe(ConfigFileSchema.name, () => {
     expect(() => configFile.read()).toThrow('bar');
     chmodSync(tmpPath, 0o777);
   });
+
+  test('readParsed of invalid JSON returns undefined', () => {
+    writeFileSync(path, '{"foo": "bar"');
+    const testConfig = ConfigFileSchema({ path, validateFunction });
+    const parsedConfig = testConfig.readParsed();
+    expect(parsedConfig).toEqual(undefined);
+  });
+
+  test('read of invalid JSON throws error', () => {
+    writeFileSync(path, '{"foo": "bar"');
+    const testConfig = ConfigFileSchema({ path, validateFunction });
+    expect(() => testConfig.read()).toThrow(`Validation of ${path} failed!`);
+  });
 });
