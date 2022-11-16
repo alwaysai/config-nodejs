@@ -5,14 +5,8 @@ import mkdirp = require('mkdirp');
 import { ValidateFunction } from 'ajv';
 
 function parse(serialized: string) {
-  try {
-    const parsed: any = JSON.parse(serialized);
-    return parsed;
-  } catch (error) {
-    throw new Error(
-      'Error parsing file contents into valid JSON. Please check file is properly formatted.',
-    );
-  }
+  const parsed: any = JSON.parse(serialized);
+  return parsed;
 }
 
 function serialize(config: any) {
@@ -39,6 +33,10 @@ export function ConfigFileSchema<T>(opts: {
     code?: any;
   };
   EACCES?: {
+    message?: string;
+    code?: any;
+  };
+  JSONDecodeError?: {
     message?: string;
     code?: any;
   };
@@ -126,8 +124,16 @@ export function ConfigFileSchema<T>(opts: {
     try {
       const parsed = parse(serialized);
       return parsed;
-    } catch (error) {
-      return undefined;
+    } catch (ex: any) {
+      if (ex instanceof(SyntaxError)) {
+        if (opts.JSONDecodeError) {
+          const message =
+              opts.JSONDecodeError.message || `Contents of ${path} could not be parsed. Please ensure file is in valid JSON format.`;
+            const code = opts.JSONDecodeError.code || 'JSONDecodeError';
+            throw new CodedError(message, code);
+        }
+      }
+      throw ex;
     }
   }
 
