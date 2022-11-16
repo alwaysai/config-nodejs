@@ -175,16 +175,41 @@ describe(ConfigFileSchema.name, () => {
     chmodSync(tmpPath, 0o777);
   });
 
-  test('readParsed of invalid JSON returns undefined', () => {
+  test('readParsed of invalid JSON throws error', () => {
     writeFileSync(path, '{"foo": "bar"');
     const testConfig = ConfigFileSchema({ path, validateFunction });
-    const parsedConfig = testConfig.readParsed();
-    expect(parsedConfig).toEqual(undefined);
+    expect(() => testConfig.readParsed()).toThrow();
   });
 
-  test('read of invalid JSON throws error', () => {
-    writeFileSync(path, '{"foo": "bar"');
+  test('read of invalid JSON (extra comma) throws default error when JSONDecodeError provided with no message', () => {
+    writeFileSync(path, '{"foo": [1,2,]}');
+    const testConfig = ConfigFileSchema({ path, validateFunction, JSONDecodeError: {} });
+    expect(() => testConfig.read()).toThrow(
+      `Contents of ${path} could not be parsed. Please ensure file is in valid JSON format.`,
+    );
+  });
+
+  test('read of invalid JSON (missing end brace) throws default error when JSONDecodeError provided with no message', () => {
+    writeFileSync(path, '{"foo": [1,2,]');
+    const testConfig = ConfigFileSchema({ path, validateFunction, JSONDecodeError: {} });
+    expect(() => testConfig.read()).toThrow(
+      `Contents of ${path} could not be parsed. Please ensure file is in valid JSON format.`,
+    );
+  });
+
+  test('read of invalid JSON throws custome error when JSONDecodeError provided with message', () => {
+    writeFileSync(path, '{"foo": [1,2,]}');
+    const testConfig = ConfigFileSchema({
+      path,
+      validateFunction,
+      JSONDecodeError: { message: 'NOT ABLE TO PARSE' },
+    });
+    expect(() => testConfig.read()).toThrow('NOT ABLE TO PARSE');
+  });
+
+  test('read of invalid JSON throws original error when JSONDecodeError not provided', () => {
+    writeFileSync(path, '{"foo": [1,2,]}');
     const testConfig = ConfigFileSchema({ path, validateFunction });
-    expect(() => testConfig.read()).toThrow(`Validation of ${path} failed!`);
+    expect(() => testConfig.read()).toThrowError(SyntaxError);
   });
 });
