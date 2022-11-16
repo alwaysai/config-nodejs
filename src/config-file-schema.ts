@@ -125,12 +125,13 @@ export function ConfigFileSchema<T>(opts: {
       const parsed = parse(serialized);
       return parsed;
     } catch (ex: any) {
-      if (ex instanceof(SyntaxError)) {
+      if (ex instanceof SyntaxError) {
         if (opts.JSONDecodeError) {
           const message =
-              opts.JSONDecodeError.message || `Contents of ${path} could not be parsed. Please ensure file is in valid JSON format.`;
-            const code = opts.JSONDecodeError.code || 'JSONDecodeError';
-            throw new CodedError(message, code);
+            opts.JSONDecodeError.message ||
+            `Contents of ${path} could not be parsed. Please ensure file is in valid JSON format.`;
+          const code = opts.JSONDecodeError.code || 'JSONDecodeError';
+          throw new CodedError(message, code);
         }
       }
       throw ex;
