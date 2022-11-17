@@ -36,7 +36,7 @@ export function ConfigFileSchema<T>(opts: {
     message?: string;
     code?: any;
   };
-  JSONDecodeError?: {
+  parseError?: {
     message?: string;
     code?: any;
   };
@@ -126,11 +126,11 @@ export function ConfigFileSchema<T>(opts: {
       return parsed;
     } catch (ex: any) {
       if (ex instanceof SyntaxError) {
-        if (opts.JSONDecodeError) {
+        if (opts.parseError) {
           const message =
-            opts.JSONDecodeError.message ||
-            `Contents of ${path} could not be parsed. Please ensure file is in valid JSON format.`;
-          const code = opts.JSONDecodeError.code || 'JSONDecodeError';
+            opts.parseError.message?.concat(`\n${ex.message}`) ||
+            `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \n${ex.message}`;
+          const code = opts.parseError.code || 'parseError';
           throw new CodedError(message, code);
         }
       }
