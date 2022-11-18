@@ -1,2 +1,2 @@
 export { ConfigFile } from './config-file';
-export { ConfigFileSchema } from './config-file-schema';
+export { ConfigFileSchema, ConfigFileSchemaReturnType } from './config-file-schema';

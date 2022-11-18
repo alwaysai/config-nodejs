@@ -2,7 +2,7 @@ import { dirname, resolve } from 'path';
 import { readFileSync, writeFileSync, renameSync, unlinkSync, existsSync } from 'fs';
 import { CodedError } from '@carnesen/coded-error';
 import mkdirp = require('mkdirp');
-import { ValidateFunction } from 'ajv';
+import { ErrorObject, ValidateFunction } from 'ajv';
 
 function parse(serialized: string) {
   const parsed: any = JSON.parse(serialized);
@@ -25,6 +25,30 @@ function isErrnoException(error: any): error is NodeJS.ErrnoException {
   );
 }
 
+export interface ConfigFileSchemaReturnType<T> {
+  path: string;
+  read: () => T;
+  readIfExists: () => T | undefined;
+  readRaw: () => string;
+  readParsed: () => any;
+  write: (config: T) => SerializedInfoType;
+  writeRaw: (serialized: string) => InfoType;
+  remove: () => InfoType;
+  update: (updater: (config: T) => void) => InfoType;
+  exists: () => boolean;
+  initialize: () => void;
+  validate: ValidateFunction<T>;
+  getErrors: () => ErrorObject<string, Record<string, any>, unknown>[] | null | undefined;
+}
+
+export interface InfoType {
+  changed: boolean;
+}
+
+export interface SerializedInfoType extends InfoType {
+  serialized: string;
+}
+
 export function ConfigFileSchema<T>(opts: {
   path: string;
   validateFunction: ValidateFunction<T>;
@@ -37,7 +61,7 @@ export function ConfigFileSchema<T>(opts: {
     code?: any;
   };
   initialValue?: T;
-}) {
+}): ConfigFileSchemaReturnType<T> {
   const path = resolve(opts.path);
   type Config = T;
   const validate = opts.validateFunction;
