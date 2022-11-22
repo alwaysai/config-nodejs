@@ -36,6 +36,10 @@ export function ConfigFileSchema<T>(opts: {
     message?: string;
     code?: any;
   };
+  parseError?: {
+    message?: string;
+    code?: any;
+  };
   initialValue?: T;
 }) {
   const path = resolve(opts.path);
@@ -117,8 +121,21 @@ export function ConfigFileSchema<T>(opts: {
 
   function readParsed() {
     const serialized = readRaw();
-    const parsed = parse(serialized);
-    return parsed;
+    try {
+      const parsed = parse(serialized);
+      return parsed;
+    } catch (ex: any) {
+      if (ex instanceof SyntaxError) {
+        if (opts.parseError) {
+          const message =
+            opts.parseError.message?.concat(`\n${ex.message}`) ||
+            `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \n${ex.message}`;
+          const code = opts.parseError.code || 'parseError';
+          throw new CodedError(message, code);
+        }
+      }
+      throw ex;
+    }
   }
 
   function read() {

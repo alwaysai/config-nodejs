@@ -174,4 +174,44 @@ describe(ConfigFileSchema.name, () => {
     expect(() => configFile.read()).toThrow('bar');
     chmodSync(tmpPath, 0o777);
   });
+
+  test('readParsed of invalid JSON throws error', () => {
+    writeFileSync(path, '{"foo": "bar"');
+    const testConfig = ConfigFileSchema({ path, validateFunction });
+    expect(() => testConfig.readParsed()).toThrow();
+  });
+
+  test('read of invalid JSON (extra comma) throws default error when parseError provided with no message', () => {
+    writeFileSync(path, '{"foo": [1,2,]}');
+    const testConfig = ConfigFileSchema({ path, validateFunction, parseError: {} });
+    expect(() => testConfig.read()).toThrowError(
+      `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \nUnexpected token ] in JSON at position 13`,
+    );
+  });
+
+  test('read of invalid JSON (missing end brace) throws default error when parseError provided with no message', () => {
+    writeFileSync(path, '{"foo": [1,2,]');
+    const testConfig = ConfigFileSchema({ path, validateFunction, parseError: {} });
+    expect(() => testConfig.read()).toThrowError(
+      `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \nUnexpected token ] in JSON at position 13`,
+    );
+  });
+
+  test('read of invalid JSON throws custome error when parseError provided with message', () => {
+    writeFileSync(path, '{"foo": [1,2,]}');
+    const testConfig = ConfigFileSchema({
+      path,
+      validateFunction,
+      parseError: { message: 'NOT ABLE TO PARSE' },
+    });
+    expect(() => {
+      testConfig.read();
+    }).toThrowError('NOT ABLE TO PARSE\nUnexpected token ] in JSON at position 13');
+  });
+
+  test('read of invalid JSON throws original error when parseError not provided', () => {
+    writeFileSync(path, '{"foo": [1,2,]}');
+    const testConfig = ConfigFileSchema({ path, validateFunction });
+    expect(() => testConfig.read()).toThrowError(SyntaxError);
+  });
 });
