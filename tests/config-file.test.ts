@@ -1,9 +1,9 @@
 import { chmodSync, existsSync, readFileSync, writeFileSync } from 'fs';
-import * as tempy from 'tempy';
 import * as t from 'io-ts';
+import * as tempy from 'tempy';
 
-import { ConfigFile } from './config-file';
 import { join } from 'path';
+import { ConfigFile } from '../src/config-file';
 
 const codec = t.intersection([
   t.type({

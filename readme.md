@@ -10,5 +10,13 @@ If you encounter any bugs or have any questions or feature requests, please don'
 
 ## Related
 
-## License
-MIT © [alwaysAI, Inc.](https://alwaysai.co)
+## Release procedure
+To release the package to [npmjs.org](https://www.npmjs.com/package/@alwaysai/config-nodejs) follow the steps:
+- publish new version: <code>npm run publish:<major|minor|patch></code>
+- check the [github pipeline](https://github.com/alwaysai/config-nodejs/actions) running, if successful a new version will be created and published to npmjs.org
+- to get the auto-generated commit and tags, simply pull: <code>git pull</code>
+
+## Pipeline is lintng, unit testing and building package on:
+- [x] Ubuntu latest / Node.js: 16.x, 18.x, 20.x
+- [x] MacOS latest / Node.js: 16.x, 18.x, 20.x
+- [x] Windows latest / Node.js: 16.x, 18.x, 20.x

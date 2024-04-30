@@ -1,9 +1,9 @@
 import { chmodSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import * as tempy from 'tempy';
 
-import { ConfigFileSchema } from './config-file-schema';
-import { join } from 'path';
 import Ajv, { JSONSchemaType } from 'ajv';
+import { join } from 'path';
+import { ConfigFileSchema } from '../src/config-file-schema';
 
 interface TestSchema {
   foo: string;
