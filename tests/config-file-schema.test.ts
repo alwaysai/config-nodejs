@@ -36,6 +36,8 @@ const subject = ConfigFileSchema({
   initialValue
 });
 
+const nodeMajorVersion = parseInt(process.versions.node);
+
 describe(ConfigFileSchema.name, () => {
   beforeEach(() => {
     subject.remove();
@@ -182,41 +184,55 @@ describe(ConfigFileSchema.name, () => {
   });
 
   test('read of invalid JSON (extra comma) throws default error when parseError provided with no message', () => {
-    writeFileSync(path, '{"foo": [1,2,]}');
+    const invalidJsonValue = '{"foo": [1,2,]}';
+    writeFileSync(path, invalidJsonValue);
     const testConfig = ConfigFileSchema({
       path,
       validateFunction,
       parseError: {}
     });
+    const expectedMsg =
+      nodeMajorVersion < 20
+        ? 'Unexpected token ] in JSON at position 13'
+        : `Unexpected token ']', \"${invalidJsonValue}\" is not valid JSON`; // eslint-disable-line no-useless-escape
     expect(() => testConfig.read()).toThrowError(
-      `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \nUnexpected token ] in JSON at position 13`
+      `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \n${expectedMsg}`
     );
   });
 
   test('read of invalid JSON (missing end brace) throws default error when parseError provided with no message', () => {
-    writeFileSync(path, '{"foo": [1,2,]');
+    const invalidJsonValue = '{"foo": [1,2,]';
+    writeFileSync(path, invalidJsonValue);
     const testConfig = ConfigFileSchema({
       path,
       validateFunction,
       parseError: {}
     });
+    const expectedMsg =
+      nodeMajorVersion < 20
+        ? 'Unexpected token ] in JSON at position 13'
+        : `Unexpected token ']', \"${invalidJsonValue}\" is not valid JSON`; // eslint-disable-line no-useless-escape
     expect(() => testConfig.read()).toThrowError(
-      `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \nUnexpected token ] in JSON at position 13`
+      `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \n${expectedMsg}`
     );
   });
 
   test('read of invalid JSON throws custome error when parseError provided with message', () => {
-    writeFileSync(path, '{"foo": [1,2,]}');
+    const invalidJsonValue = '{"foo": [1,2,]}';
+    const errorMessage = 'NOT ABLE TO PARSE';
+    writeFileSync(path, invalidJsonValue);
     const testConfig = ConfigFileSchema({
       path,
       validateFunction,
-      parseError: { message: 'NOT ABLE TO PARSE' }
+      parseError: { message: errorMessage }
     });
+    const expectedMsg =
+      nodeMajorVersion < 20
+        ? `${errorMessage}\nUnexpected token ] in JSON at position 13`
+        : `${errorMessage}\nUnexpected token ']', \"${invalidJsonValue}\" is not valid JSON`; // eslint-disable-line no-useless-escape
     expect(() => {
       testConfig.read();
-    }).toThrowError(
-      'NOT ABLE TO PARSE\nUnexpected token ] in JSON at position 13'
-    );
+    }).toThrowError(expectedMsg);
   });
 
   test('read of invalid JSON throws original error when parseError not provided', () => {
