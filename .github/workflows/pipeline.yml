@@ -3,7 +3,7 @@ name: alwaysai/codecs
 on:
   push:
     branches:
-      - main
+      - EI-1238
     tags:
       - major
       - minor
