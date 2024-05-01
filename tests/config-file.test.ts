@@ -63,7 +63,7 @@ describe(ConfigFile.name, () => {
 
   it('"update" uses the provided default config if the file does not exist', () => {
     subject.remove();
-    subject.update(() => {});
+    subject.update(() => jest.fn());
     expect(JSON.parse(readFileSync(path, 'utf8'))).toEqual(initialValue);
   });
 
@@ -74,7 +74,7 @@ describe(ConfigFile.name, () => {
   it('"update" throws if the there is no initial nor current value', () => {
     expect(() =>
       ConfigFile({ path: join(path, 'no-initial-value.json'), codec }).update(
-        () => {}
+        () => jest.fn()
       )
     ).toThrow('ENOENT');
   });

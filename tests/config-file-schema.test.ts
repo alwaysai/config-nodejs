@@ -78,7 +78,7 @@ describe(ConfigFileSchema.name, () => {
 
   test('"update" uses the provided default config if the file does not exist', () => {
     subject.remove();
-    subject.update(() => {});
+    subject.update(() => jest.fn());
     expect(JSON.parse(readFileSync(path, 'utf8'))).toEqual(initialValue);
   });
 
@@ -91,7 +91,7 @@ describe(ConfigFileSchema.name, () => {
       ConfigFileSchema({
         path: join(path, 'no-initial-value.json'),
         validateFunction
-      }).update(() => {})
+      }).update(() => jest.fn())
     ).toThrow('ENOENT');
   });
 
