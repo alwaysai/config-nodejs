@@ -14,10 +14,10 @@ const schema: JSONSchemaType<TestSchema> = {
   type: 'object',
   properties: {
     foo: { type: 'string' },
-    baz: { type: 'string', nullable: true },
+    baz: { type: 'string', nullable: true }
   },
   required: ['foo'],
-  additionalProperties: false,
+  additionalProperties: false
 };
 
 const ajv = new Ajv();
@@ -27,13 +27,13 @@ const validateFunction = ajv.compile(schema);
 const path = tempy.file();
 
 const initialValue: TestSchema = {
-  foo: 'foo',
+  foo: 'foo'
 };
 
 const subject = ConfigFileSchema({
   path,
   validateFunction,
-  initialValue,
+  initialValue
 });
 
 describe(ConfigFileSchema.name, () => {
@@ -90,8 +90,8 @@ describe(ConfigFileSchema.name, () => {
     expect(() =>
       ConfigFileSchema({
         path: join(path, 'no-initial-value.json'),
-        validateFunction,
-      }).update(() => {}),
+        validateFunction
+      }).update(() => {})
     ).toThrow('ENOENT');
   });
 
@@ -126,15 +126,15 @@ describe(ConfigFileSchema.name, () => {
         keyword: 'required',
         message: "must have required property 'foo'",
         params: { missingProperty: 'foo' },
-        schemaPath: '#/required',
-      },
+        schemaPath: '#/required'
+      }
     ]);
   });
 
   test('initialize throws if no initial value is provided', () => {
     const configFile = ConfigFileSchema({
       path: join(path, 'no-initial-value-2.json'),
-      validateFunction,
+      validateFunction
     });
     expect(configFile.initialize).toThrow('initialValue');
   });
@@ -146,7 +146,7 @@ describe(ConfigFileSchema.name, () => {
       path: join(tmpDir, 'test.json'),
       validateFunction,
       initialValue,
-      EACCES: { code: 'foo', message: 'bar' },
+      EACCES: { code: 'foo', message: 'bar' }
     });
     expect(configFile.initialize).toThrow('bar');
     chmodSync(tmpDir, 0o777);
@@ -156,7 +156,7 @@ describe(ConfigFileSchema.name, () => {
     const configFile = ConfigFileSchema({
       path: tempy.file(),
       validateFunction,
-      ENOENT: { code: 'foo', message: 'bar' },
+      ENOENT: { code: 'foo', message: 'bar' }
     });
     expect(() => configFile.read()).toThrow('bar');
   });
@@ -167,7 +167,7 @@ describe(ConfigFileSchema.name, () => {
       path: tmpPath,
       validateFunction,
       initialValue,
-      EACCES: { code: 'foo', message: 'bar' },
+      EACCES: { code: 'foo', message: 'bar' }
     });
     configFile.initialize();
     chmodSync(tmpPath, 0o000);
@@ -183,17 +183,25 @@ describe(ConfigFileSchema.name, () => {
 
   test('read of invalid JSON (extra comma) throws default error when parseError provided with no message', () => {
     writeFileSync(path, '{"foo": [1,2,]}');
-    const testConfig = ConfigFileSchema({ path, validateFunction, parseError: {} });
+    const testConfig = ConfigFileSchema({
+      path,
+      validateFunction,
+      parseError: {}
+    });
     expect(() => testConfig.read()).toThrowError(
-      `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \nUnexpected token ] in JSON at position 13`,
+      `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \nUnexpected token ] in JSON at position 13`
     );
   });
 
   test('read of invalid JSON (missing end brace) throws default error when parseError provided with no message', () => {
     writeFileSync(path, '{"foo": [1,2,]');
-    const testConfig = ConfigFileSchema({ path, validateFunction, parseError: {} });
+    const testConfig = ConfigFileSchema({
+      path,
+      validateFunction,
+      parseError: {}
+    });
     expect(() => testConfig.read()).toThrowError(
-      `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \nUnexpected token ] in JSON at position 13`,
+      `Contents of ${path} could not be parsed. Please ensure file is in a valid format. \nUnexpected token ] in JSON at position 13`
     );
   });
 
@@ -202,11 +210,13 @@ describe(ConfigFileSchema.name, () => {
     const testConfig = ConfigFileSchema({
       path,
       validateFunction,
-      parseError: { message: 'NOT ABLE TO PARSE' },
+      parseError: { message: 'NOT ABLE TO PARSE' }
     });
     expect(() => {
       testConfig.read();
-    }).toThrowError('NOT ABLE TO PARSE\nUnexpected token ] in JSON at position 13');
+    }).toThrowError(
+      'NOT ABLE TO PARSE\nUnexpected token ] in JSON at position 13'
+    );
   });
 
   test('read of invalid JSON throws original error when parseError not provided', () => {

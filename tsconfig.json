@@ -1,8 +1,6 @@
 {
     "extends": "@alwaysai/tsconfig/nodejs/tsconfig.json",
-    "include": [
-        "src"
-, "tests/index.test.ts", "tests/config-file-schema.test.ts", "tests/config-file.test.ts"    ],
+    "include": ["src"],
     "compilerOptions": {
         "rootDir": "./src",
         "outDir": "./lib",

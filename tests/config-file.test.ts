@@ -7,21 +7,21 @@ import { ConfigFile } from '../src/config-file';
 
 const codec = t.intersection([
   t.type({
-    foo: t.string,
+    foo: t.string
   }),
-  t.partial({ baz: t.string }),
+  t.partial({ baz: t.string })
 ]);
 
 const path = tempy.file();
 
 const initialValue = {
-  foo: 'foo',
+  foo: 'foo'
 };
 
 const subject = ConfigFile({
   path,
   codec,
-  initialValue,
+  initialValue
 });
 
 describe(ConfigFile.name, () => {
@@ -73,7 +73,9 @@ describe(ConfigFile.name, () => {
 
   it('"update" throws if the there is no initial nor current value', () => {
     expect(() =>
-      ConfigFile({ path: join(path, 'no-initial-value.json'), codec }).update(() => {}),
+      ConfigFile({ path: join(path, 'no-initial-value.json'), codec }).update(
+        () => {}
+      )
     ).toThrow('ENOENT');
   });
 
@@ -94,7 +96,10 @@ describe(ConfigFile.name, () => {
   });
 
   it('initialize throws if no initial value is provided', () => {
-    const configFile = ConfigFile({ path: join(path, 'no-initial-value-2.json'), codec });
+    const configFile = ConfigFile({
+      path: join(path, 'no-initial-value-2.json'),
+      codec
+    });
     expect(configFile.initialize).toThrow('initialValue');
   });
 
@@ -105,7 +110,7 @@ describe(ConfigFile.name, () => {
       path: join(tmpDir, 'test.json'),
       codec,
       initialValue,
-      EACCES: { code: 'foo', message: 'bar' },
+      EACCES: { code: 'foo', message: 'bar' }
     });
     expect(configFile.initialize).toThrow('bar');
     chmodSync(tmpDir, 0o777);
@@ -115,7 +120,7 @@ describe(ConfigFile.name, () => {
     const configFile = ConfigFile({
       path: tempy.file(),
       codec,
-      ENOENT: { code: 'foo', message: 'bar' },
+      ENOENT: { code: 'foo', message: 'bar' }
     });
     expect(() => configFile.read()).toThrow('bar');
   });
@@ -126,7 +131,7 @@ describe(ConfigFile.name, () => {
       path: tmpPath,
       codec,
       initialValue,
-      EACCES: { code: 'foo', message: 'bar' },
+      EACCES: { code: 'foo', message: 'bar' }
     });
     configFile.initialize();
     chmodSync(tmpPath, 0o000);
