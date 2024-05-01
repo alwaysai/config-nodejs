@@ -150,6 +150,10 @@ export function ConfigFileSchema<T>(opts: {
       try {
         unlinkSync(tmpFilePath);
       } finally {
+        // TODO: EI-1252: not sure what is the reason to raise exception here.
+        // As it will blow up and terminate running application.
+        // Since this package is used as a dependency in other packages and ultimately in CLI and device-agent
+        // eslint-disable-next-line no-unsafe-finally
         throw exception;
       }
     }
