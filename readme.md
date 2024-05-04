@@ -12,6 +12,7 @@ If you encounter any bugs or have any questions or feature requests, please don'
 
 ## Release procedure
 To release the package to [npmjs.org](https://www.npmjs.com/package/@alwaysai/config-nodejs) follow the steps:
+
 - publish new version: <code>npm run publish:<major|minor|patch></code>
 - check the [github pipeline](https://github.com/alwaysai/config-nodejs/actions) running, if successful a new version will be created and published to npmjs.org
 - to get the auto-generated commit and tags, simply pull: <code>git pull</code>
