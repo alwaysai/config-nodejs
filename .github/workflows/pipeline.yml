@@ -3,7 +3,7 @@ name: alwaysai/config-nodejs
 on:
   push:
     branches:
-      - EI-1238
+      - main
     tags:
       - major
       - minor
