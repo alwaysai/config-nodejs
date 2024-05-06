@@ -20,4 +20,4 @@ To release the package to [npmjs.org](https://www.npmjs.com/package/@alwaysai/co
 ## Pipeline is lintng, unit testing and building package on:
 - [x] Ubuntu latest / Node.js: 16.x, 18.x, 20.x, 22.x
 - [x] MacOS latest / Node.js: 16.x, 18.x, 20.x, 22.x
-- [x] Windows latest / Node.js: 16.x, 18.x, 20.x, 22.x
+- [ ] Windows latest / Node.js: 16.x, 18.x, 20.x, 22.x - unit tests failing on Windows!
