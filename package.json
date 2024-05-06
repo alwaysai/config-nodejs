@@ -1,7 +1,7 @@
 {
   "name": "@alwaysai/config-nodejs",
   "description": "A Node.js library for alwaysAI configuration",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
