@@ -1,4 +1,4 @@
-import { ConfigFile, ConfigFileSchema } from './index';
+import { ConfigFile, ConfigFileSchema } from '../src/index';
 
 describe('index', () => {
   test(`check exports`, () => {

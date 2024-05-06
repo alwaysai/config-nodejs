@@ -1,5 +1,11 @@
 import { dirname, resolve } from 'path';
-import { readFileSync, writeFileSync, renameSync, unlinkSync, existsSync } from 'fs';
+import {
+  readFileSync,
+  writeFileSync,
+  renameSync,
+  unlinkSync,
+  existsSync
+} from 'fs';
 import { CodedError } from '@carnesen/coded-error';
 import mkdirp = require('mkdirp');
 import { ErrorObject, ValidateFunction } from 'ajv';
@@ -38,7 +44,10 @@ export interface ConfigFileSchemaReturnType<T> {
   exists: () => boolean;
   initialize: () => void;
   validate: ValidateFunction<T>;
-  getErrors: () => ErrorObject<string, Record<string, any>, unknown>[] | null | undefined;
+  getErrors: () =>
+    | ErrorObject<string, Record<string, any>, unknown>[]
+    | null
+    | undefined;
 }
 
 export interface InfoType {
@@ -83,7 +92,7 @@ export function ConfigFileSchema<T>(opts: {
     exists,
     initialize,
     validate,
-    getErrors,
+    getErrors
   };
 
   function readRaw() {
@@ -98,7 +107,9 @@ export function ConfigFileSchema<T>(opts: {
           throw new CodedError(message, code);
         } else if (ex.code === 'EACCES' && opts.EACCES) {
           const message =
-            opts.EACCES.message || ex.message || 'Permission not granted on file';
+            opts.EACCES.message ||
+            ex.message ||
+            'Permission not granted on file';
           const code = opts.EACCES.code || 'EACCES';
           throw new CodedError(message, code);
         }
@@ -110,7 +121,7 @@ export function ConfigFileSchema<T>(opts: {
 
   function writeRaw(serialized: string) {
     const info = {
-      changed: false,
+      changed: false
     };
     if (existsSync(path) && serialized === readRaw()) {
       return info;
@@ -124,7 +135,9 @@ export function ConfigFileSchema<T>(opts: {
       if (isErrnoException(ex)) {
         if (ex.code === 'EACCES' && opts.EACCES) {
           const message =
-            opts.EACCES.message || ex.message || 'Permission not granted on file';
+            opts.EACCES.message ||
+            ex.message ||
+            'Permission not granted on file';
           const code = opts.EACCES.code || 'EACCES';
           throw new CodedError(message, code);
         }
@@ -137,6 +150,10 @@ export function ConfigFileSchema<T>(opts: {
       try {
         unlinkSync(tmpFilePath);
       } finally {
+        // TODO: EI-1252: not sure what is the reason to raise exception here.
+        // As it will blow up and terminate running application.
+        // Since this package is used as a dependency in other packages and ultimately in CLI and device-agent
+        // eslint-disable-next-line no-unsafe-finally
         throw exception;
       }
     }
@@ -190,7 +207,7 @@ export function ConfigFileSchema<T>(opts: {
 
   function remove() {
     const value = {
-      changed: false,
+      changed: false
     };
     if (existsSync(path)) {
       value.changed = true;
@@ -201,7 +218,9 @@ export function ConfigFileSchema<T>(opts: {
 
   function initialize() {
     if (typeof opts.initialValue === 'undefined') {
-      throw new Error('"initialize" can only be called if "initialValue" is provided');
+      throw new Error(
+        '"initialize" can only be called if "initialValue" is provided'
+      );
     }
     if (!exists()) {
       write(opts.initialValue);
@@ -219,7 +238,7 @@ export function ConfigFileSchema<T>(opts: {
     // This mutates the config object ^^
     if (typeof returnValue !== 'undefined') {
       throw new Error(
-        'Updater returned a value. Mutate the passed configuration instead.',
+        'Updater returned a value. Mutate the passed configuration instead.'
       );
     }
     const info = write(config);
