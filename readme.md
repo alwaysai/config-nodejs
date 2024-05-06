@@ -17,7 +17,7 @@ To release the package to [npmjs.org](https://www.npmjs.com/package/@alwaysai/co
 - check the [github pipeline](https://github.com/alwaysai/config-nodejs/actions) running, if successful a new version will be created and published to npmjs.org
 - to get the auto-generated commit and tags, simply pull: <code>git pull</code>
 
-## Pipeline is lintng, unit testing and building package on:
+## Pipeline is linting, unit testing and building package on:
 - [x] Ubuntu latest / Node.js: 16.x, 18.x, 20.x, 22.x
 - [x] MacOS latest / Node.js: 16.x, 18.x, 20.x, 22.x
 - [ ] Windows latest / Node.js: 16.x, 18.x, 20.x, 22.x - unit tests failing on Windows!
